@@ -1,0 +1,17 @@
+<div class="card" style="width: 20rem;">
+  <img [src]="productImage" class="card-img-top img-fluid" alt="..." style="max-height: 180px; width: auto; object-fit: cover;">
+  <div class="card-body">
+    <h5 class="card-title">{{ product.name }}</h5>
+    <p class="card-text">{{ product.description }}</p>
+  </div>
+  <ul class="list-group list-group-flush">
+    <li class="list-group-item">Price: {{ product.price | currency:'INR' }}</li>
+  </ul>
+  <div class="card-body">
+    <button *ngIf="canSell" type="button" class="btn btn-link btn-sm" (click)="moveToSale()">Sell</button>
+    <button *ngIf="canBuy" type="button" class="btn btn-link btn-sm" (click)="buyProduct()">Buy</button>
+    <button *ngIf="canTrade" type="button" class="btn btn-link btn-sm">Trade</button>
+    <button *ngIf="canEdit" type="button" class="btn btn-link btn-sm" (click)="editProduct()">Edit</button>
+    <button *ngIf="canDelete" type="button" class="btn btn-link btn-sm" (click)="deleteProduct()">Delete</button>
+  </div>
+</div>
