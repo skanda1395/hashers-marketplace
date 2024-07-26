@@ -6,7 +6,7 @@ import { HttpClientModule } from '@angular/common/http';
 import { AuthService } from '../../services/auth.service';
 import { FOR_SALE } from '../../utilities/utilities';
 
-declare const bootstrap: any;
+declare const bootstrap: any
 
 @Component({
   selector: 'app-sell',
