@@ -10,7 +10,7 @@
   <div class="card-body">
     <button *ngIf="canSell" type="button" class="btn btn-link btn-sm" (click)="moveToSale()">Sell</button>
     <button *ngIf="canBuy" type="button" class="btn btn-link btn-sm" (click)="buyProduct()">Buy</button>
-    <button *ngIf="canTrade" type="button" class="btn btn-link btn-sm">Trade</button>
+    <button *ngIf="canTrade" type="button" class="btn btn-link btn-sm" (click)="tradeProduct()">Trade</button>
     <button *ngIf="canEdit" type="button" class="btn btn-link btn-sm" (click)="editProduct()">Edit</button>
     <button *ngIf="canDelete" type="button" class="btn btn-link btn-sm" (click)="deleteProduct()">Delete</button>
   </div>

@@ -27,6 +27,7 @@
     @for (product of filteredProductsList; track product.id) {
       <app-product [product]="product" class="col" 
         (buy)="openConfirmationModal($event)"
+        (trade)="openTradeModal($event)"
         />
     }
     @if (!filteredProductsList.length) {
@@ -50,6 +51,34 @@
       <div class="modal-footer">
         <button type="button" class="btn btn-primary" (click)="confirmPurchase()">Confirm</button>
         <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cancel</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" tabindex="-1" id="tradeModal">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Confirm Trade</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        @if (!currentUserProductsList.length) {
+          <p class="text-center">You don't have any items to trade</p>
+        } @else {
+          <form [formGroup]="tradeForm" (ngSubmit)="tradeProduct()">
+            <div class="mb-3">
+              <div *ngFor="let product of currentUserProductsList" class="form-check">
+                <input class="form-check-input" type="radio" [value]="product.id" formControlName="tradeProductId" [id]="product.id">
+                <label class="form-check-label" [for]="product.id">
+                  {{ product.name }} - {{ product.price | currency:'INR' }}
+                </label>
+              </div>
+            </div>
+            <button class="btn btn-primary w-100 py-2" type="submit" [disabled]="tradeForm.invalid">Trade</button>
+          </form>
+        }
       </div>
     </div>
   </div>

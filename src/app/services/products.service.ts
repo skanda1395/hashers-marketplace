@@ -31,6 +31,10 @@ export class ProductsService {
     return this.http.get<Product[]>(`${this.baseUrl}/products?owner=${email}`);
   }
 
+  getMyProductsForSale(email: string) {
+    return this.http.get<Product[]>(`${this.baseUrl}/products?owner=${email}&status=${'SALE'}`);
+  }
+
   buyProduct(product: Product) {
     return this.http.put<Product[]>(`${this.baseUrl}/products/${product.id}`, product);  
   }

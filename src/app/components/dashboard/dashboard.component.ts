@@ -4,14 +4,16 @@ import { ProductsService } from '../../services/products.service';
 import { Product } from '../../interfaces/product';
 import { HttpClientModule } from '@angular/common/http';
 import { AuthService } from '../../services/auth.service';
-import { FormsModule } from '@angular/forms';
+import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import { CommonModule } from '@angular/common';
+import { FOR_SALE } from '../../utilities/utilities';
 
 declare const bootstrap: any;
 
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [ProductComponent, HttpClientModule, FormsModule],
+  imports: [ProductComponent, HttpClientModule, FormsModule, CommonModule, ReactiveFormsModule],
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.css',
   providers: [ProductsService, AuthService]
@@ -19,28 +21,45 @@ declare const bootstrap: any;
 export class DashboardComponent {
   productsList: Product[] = [];
   filteredProductsList: Product[] = [];
+  currentUserProductsList: Product[] = [];
   selectedProductId: string = "";
   modalElement: any;
+  tradeModalElement: any;
   searchQuery: string = "";
   minPrice: number | null = null;
   maxPrice: number | null = null;
   sortOptions: string = "priceAsc";
+  tradeForm: FormGroup;
 
-  constructor(private productsService: ProductsService, private authService: AuthService) {
-
+  constructor(private fb: FormBuilder, private productsService: ProductsService, private authService: AuthService) {
+    this.tradeForm = this.fb.group({
+      tradeProductId: ["", Validators.required]
+    });
   }
 
   ngOnInit(): void {
     this.modalElement = new bootstrap.Modal(document.getElementById('confirmtionModal'))
+    this.tradeModalElement = new bootstrap.Modal(document.getElementById('tradeModal'))
     this.fetchProducts();
+    this.fetchCurrentUserProducts();
   }
 
   fetchProducts() {
     const currentUser = this.authService.getCurrentUser();
     this.productsService.getAllProductsExceptCurrentUser(currentUser).subscribe(
       response => {
-        this.productsList = response;
+        this.productsList = response.filter(product => product.status === FOR_SALE);
         this.applyFilters();
+      },
+      error => console.log(error)
+    );
+  }
+
+  fetchCurrentUserProducts() {
+    const currentUser = this.authService.getCurrentUser();
+    this.productsService.getMyProductsForSale(currentUser).subscribe(
+      response => {
+        this.currentUserProductsList = response.filter(product => product.status === FOR_SALE);
       },
       error => console.log(error)
     );
@@ -79,6 +98,12 @@ export class DashboardComponent {
     this.selectedProductId = id;
     this.modalElement.show();
   }
+  
+  openTradeModal(id: string) {
+    if (!this.tradeModalElement) return;
+    this.selectedProductId = id;
+    this.tradeModalElement.show();
+  }
 
   confirmPurchase() {
     const product = this.productsList.find(product => product.id === this.selectedProductId);
@@ -95,5 +120,30 @@ export class DashboardComponent {
       },
       error => console.log(error)
     );
+  }
+
+  tradeProduct() {
+    let otherPersonProduct = this.productsList.find(product => product.id === this.selectedProductId);
+    let myTradingProduct = this.currentUserProductsList.find(product => product.id === this.tradeForm.get("tradeProductId")?.value);
+    if (otherPersonProduct === undefined|| myTradingProduct === undefined) return;
+    const tempOwner = otherPersonProduct.owner;
+    
+    otherPersonProduct = { ...otherPersonProduct, status: "SOLD", owner: myTradingProduct.owner };
+    myTradingProduct = { ...myTradingProduct, status: "SOLD", owner: tempOwner };
+    
+    this.productsService.buyProduct(otherPersonProduct).subscribe(
+      response => {
+        this.productsService.buyProduct(myTradingProduct).subscribe(
+          response => {
+            console.log("SUCCESS");
+            this.tradeModalElement.hide();
+            this.fetchProducts();
+          },
+          error => console.log(error)
+        );
+      },
+      error => console.log(error)
+    );
+    
   }
 }

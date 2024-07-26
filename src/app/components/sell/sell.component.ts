@@ -4,8 +4,8 @@ import { ProductsService } from '../../services/products.service';
 import { Product } from '../../interfaces/product';
 import { HttpClientModule } from '@angular/common/http';
 import { AuthService } from '../../services/auth.service';
+import { FOR_SALE } from '../../utilities/utilities';
 
-const FOR_SALE = "SALE";
 declare const bootstrap: any;
 
 @Component({

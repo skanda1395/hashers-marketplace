@@ -13,6 +13,7 @@ import { AuthService } from '../../services/auth.service';
 export class ProductComponent {
   @Input() product!: Product;
   @Output() buy = new EventEmitter<string>();
+  @Output() trade = new EventEmitter<string>();
   @Output() delete = new EventEmitter<string>();
   @Output() toSale = new EventEmitter<string>();
   @Output() edit = new EventEmitter<string>();
@@ -21,6 +22,10 @@ export class ProductComponent {
 
   buyProduct() {
     this.buy.emit(this.product.id);
+  }
+
+  tradeProduct() {
+    this.trade.emit(this.product.id);
   }
 
   deleteProduct() {
