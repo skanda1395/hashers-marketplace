@@ -1,0 +1,46 @@
+<section class="container py-5 my-4">
+  <div class="row justify-content-end mb-2">
+    <div class="col-4 text-end">
+      <button type="button" class="btn btn-dark" (click)="openSellItemModal()">Sell an Item</button>
+    </div>
+  </div>
+  <div class="row justify-content-center">
+    <div class="col-6">
+      <form [formGroup]="form" class="d-flex justify-content-center">
+        <div class="mx-4">
+          <input type="radio" class="btn-check" value="SALE" id="success-outlined" formControlName="selectedOption">
+          <label class="btn btn-outline-primary" for="success-outlined">For Sale</label>
+        </div> 
+        <div>
+          <input type="radio" class="btn-check" value="SOLD" id="danger-outlined" formControlName="selectedOption">
+          <label class="btn btn-outline-primary" for="danger-outlined">Bought</label>
+        </div>     
+      </form>
+    </div>
+  </div>
+  <div class="row my-4">
+    @for (product of filteredItems; track product.id) {
+        <app-product [product]="product" class="col" 
+        (delete)="deleteProduct($event)" 
+        (toSale)="moveToSale($event)"
+        (edit)="openEditItemModal($event)"/>
+    }
+    @if (!filteredItems.length) {
+      <div class="col-12 text-center">
+        <h3>No items available</h3>
+        <p class="text-muted">Please check back later.</p>
+      </div>
+    }
+  </div>
+</section>
+<div class="modal fade" tabindex="-1" id="sellItemModal">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Item for Sale</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <app-sell [product]="selectedProduct" (formSubmitted)="closeSellItemModal()"/>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,24 @@
+<div class="card border-0">
+  <div class="card-body">
+    <form class="" [formGroup]="newProductForm" (ngSubmit)="addOrUpdateProductForSale()">
+      <!-- <h1 class="h3 mb-3 fw-normal text-center my-4">Item for Sale</h1> -->
+      <div class="form-floating mb-3">
+        <input type="text" class="form-control" id="floatingName" placeholder="Name" formControlName="name">
+        <label for="floatingName">Name</label>
+      </div>
+      <div class="form-floating mb-3">
+        <input type="text" class="form-control" id="floatingDesc" placeholder="Description" formControlName="description">
+        <label for="floatingDesc">Description</label>
+      </div>
+      <div class="form-floating mb-3">
+        <input type="number" class="form-control" id="flotingPrice" placeholder="Price" formControlName="price">
+        <label for="flotingPrice">Price</label>
+      </div>
+      <div class="input-group mb-3">
+        <input type="file" class="form-control" id="productImage" (change)="onFileChange($event)" >
+        <label class="input-group-text" for="productImage">Upload Product Image</label>
+      </div>
+      <button class="btn btn-primary w-100 py-2" type="submit" [disabled]="newProductForm.invalid">{{ isEditing ? "Update Product" : "Put up for sale" }}</button>
+    </form>
+  </div>
+</div>
