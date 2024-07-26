@@ -1,0 +1,18 @@
+<nav class="navbar fixed-top navbar-expand-lg bg-body-secondary">
+  <div class="container-fluid">
+    <a class="navbar-brand" routerLink="/">
+      <img src="/logo_.svg" alt="Logo" width="30" height="24" class="d-inline-block align-text-top">
+      Hashers Marketplace
+    </a>
+  </div>
+  @if (isLoggedIn) {
+    <div class="collapse navbar-collapse">
+      <ul class="navbar-nav ml-auto">
+        <li class="nav-item"><a routerLink="dashboard" class="nav-link">Dashboard</a></li>
+        <li class="nav-item"><a routerLink="items" class="nav-link">Items</a></li>
+        <li class="nav-item"><a routerLink="transactions" class="nav-link">Transactions</a></li>
+        <li class="nav-item"><a class="nav-link" (click)="logout()">Logout</a></li>
+      </ul>
+    </div>
+  }
+</nav>
