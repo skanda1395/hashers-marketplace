@@ -1,20 +1,25 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { ProductsService } from '../../services/products.service';
-import { Product } from '../../interfaces/product';
-import { HttpClientModule } from '@angular/common/http';
-import { AuthService } from '../../services/auth.service';
-import { FOR_SALE } from '../../utilities/utilities';
+import { Component, EventEmitter, Input, Output } from "@angular/core";
+import {
+  FormBuilder,
+  FormGroup,
+  ReactiveFormsModule,
+  Validators,
+} from "@angular/forms";
+import { ProductsService } from "../../services/products.service";
+import { Product } from "../../interfaces/product";
+import { HttpClientModule } from "@angular/common/http";
+import { AuthService } from "../../services/auth.service";
+import { DUMMY_PRODUCT_IMG, FOR_SALE } from "../../utilities/constants";
 
-declare const bootstrap: any
+declare const bootstrap: any;
 
 @Component({
-  selector: 'app-sell',
+  selector: "app-sell",
   standalone: true,
   imports: [ReactiveFormsModule, HttpClientModule],
-  templateUrl: './sell.component.html',
-  styleUrl: './sell.component.css',
-  providers: [ProductsService, AuthService]
+  templateUrl: "./sell.component.html",
+  styleUrl: "./sell.component.css",
+  providers: [ProductsService, AuthService],
 })
 export class SellComponent {
   newProductForm: FormGroup;
@@ -23,11 +28,15 @@ export class SellComponent {
   isEditing: boolean = false;
   imageDataUrl: string | ArrayBuffer | null = null;
 
-  constructor(private fb: FormBuilder, private productsService: ProductsService, private authService: AuthService) {
+  constructor(
+    private fb: FormBuilder,
+    private productsService: ProductsService,
+    private authService: AuthService
+  ) {
     this.newProductForm = this.fb.group({
-      name: ['', [Validators.required]],
-      description: ['', [Validators.required]],
-      price: ['', [Validators.required]],
+      name: ["", [Validators.required]],
+      description: ["", [Validators.required]],
+      price: ["", [Validators.required]],
       // image: ['', [Validators.required]]
     });
   }
@@ -52,9 +61,8 @@ export class SellComponent {
       const reader = new FileReader();
 
       reader.onload = () => {
-        console.log("READER RESULT", reader.result);
         this.imageDataUrl = reader.result;
-      }
+      };
 
       reader.readAsDataURL(file);
     }
@@ -62,30 +70,45 @@ export class SellComponent {
 
   addOrUpdateProductForSale() {
     if (this.newProductForm.invalid) return;
-    const { name,  description, price } = this.newProductForm.value;
+    const { name, description, price } = this.newProductForm.value;
     const currentUser = this.authService.getCurrentUser();
-   
+
     if (this.isEditing) {
-      const updatedProduct: Product = { ...this.product, name, description, price: `${price}` };
-      this.productsService.updateProductForSale(updatedProduct as Product).subscribe(
-        response => { 
-          this.newProductForm.reset();
-          this.formSubmitted.emit(); 
-          // SHOW SUCCESS TOAST
-        },
-        error => console.log(error)
-      )
+      const updatedProduct: Product = {
+        ...this.product,
+        name,
+        description,
+        price: `${price}`,
+      };
+      this.productsService
+        .updateProductForSale(updatedProduct as Product)
+        .subscribe(
+          (response) => {
+            this.newProductForm.reset();
+            this.formSubmitted.emit();
+            // SHOW SUCCESS TOAST
+          },
+          (error) => console.log(error)
+        );
     } else {
-      console.log("IMAGE DATA URL", this.imageDataUrl);
-      const newProduct = { name, description, price: `${price}`, status: FOR_SALE, owner: currentUser, imageDataUrl: `${this.imageDataUrl}`, dateAdded: new Date().toISOString() };
+      const imageDataUrl = this.imageDataUrl || DUMMY_PRODUCT_IMG;
+      const newProduct = {
+        imageDataUrl,
+        name,
+        description,
+        price: `${price}`,
+        status: FOR_SALE,
+        owner: currentUser,
+        dateAdded: new Date().toISOString(),
+      };
       this.productsService.addProductForSale(newProduct as Product).subscribe(
-        response => { 
+        (response) => {
           this.newProductForm.reset();
-          this.formSubmitted.emit(); 
+          this.formSubmitted.emit();
           // SHOW SUCCESS TOAST
         },
-        error => console.log(error)
-      ) 
+        (error) => console.log(error)
+      );
     }
   }
 }
